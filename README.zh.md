@@ -2,12 +2,13 @@
 
 [English](README.md)
 
-<img width="500" alt="20260911-210409" src="https://github.com/user-attachments/assets/2e6a2b40-88b1-4bad-874f-d59bae68ac3e" />
+为 iOS 15+ 的 Apple 地图（Apple Maps）提供独立的语言选择面板。脱离系统全局语言控制，轻松切换地图界面语言。
+💡 兼容性：iOS 15.4.1 真机实测通过。如果您的系统遇到问题，请参考 [3. 崩溃日志提交（Crash Logs）](#crash-logs) 反馈。
 
-> 为 iOS 15+ 的 Apple 地图（Apple Maps）提供独立的语言选择面板。脱离系统全局语言控制，轻松切换地图界面语言。
-> 💡 兼容性：iOS 15.4.1 真机实测通过。如果您的系统遇到问题，请参考 [3. 崩溃日志提交（Crash Logs）](#crash-logs) 反馈。
+基于 TrollFools 注入 dylib 实现，无需替换任何 Objective-C 方法，无遥测、无网络请求，不读取或记录任何位置、路线及个人隐私数据。
 
-基于 **TrollFools** 注入 dylib 实现，无需替换任何 Objective-C 方法，无遥测、无网络请求，不读取或记录任何位置、路线及个人隐私数据。
+<img width="300" alt="20260911-210409" src="https://github.com/user-attachments/assets/2e6a2b40-88b1-4bad-874f-d59bae68ac3e" />
+
 ---
 
 ## 🌟 核心功能
