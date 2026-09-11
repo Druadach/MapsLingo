@@ -98,7 +98,7 @@ const releaseEntries = [];
 for (const name of artifactNames) {
   releaseEntries.push({ name, data: await readFile(path.join(root, 'dist', name)) });
 }
-for (const name of ['README.md', 'README.zh.md', 'CHANGELOG.md']) {
+for (const name of ['README.md', 'README.zh.md', 'CHANGELOG.md', 'LICENSE']) {
   releaseEntries.push({ name, data: await readFile(path.join(root, name)) });
 }
 const archives = [

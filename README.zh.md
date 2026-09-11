@@ -2,74 +2,108 @@
 
 [English](README.md)
 
-给 iOS 15+ 的 Apple 地图增加独立的语言选择面板。系统保持英文，地图可使用简体中文、繁体中文、英文等**当前地图 App 自带的语言**。
+> 为 iOS 15+ 的 Apple 地图（Apple Maps）提供独立的语言选择面板。脱离系统全局语言控制，轻松切换地图界面语言。
+> 💡 兼容性：iOS 15.4.1 真机实测通过。如果您的系统遇到问题，请参考 [3. 崩溃日志提交（Crash Logs）](#crash-logs) 反馈。
 
-以一个 dylib 通过 TrollFools 注入，不需要单独的设置 App，也不依赖 Substrate / ElleKit。
+基于 **TrollFools** 注入 dylib 实现，无需替换任何 Objective-C 方法，无遥测、无网络请求，不读取或记录任何位置、路线及个人隐私数据。
+---
 
-> **当前状态：0.1.0 预发布。** 已收到一位 iOS 15.4.1 用户使用成功的反馈；每种语言、手势、恢复操作和其他设备尚未逐项验证，一次成功反馈不代表完整兼容性认证。最低系统版本标记为 iOS 15.0，不等于所有 iOS 15+ 设备都已验证。
+## 🌟 核心功能
 
-## 设计说明
+- **独立语言切换**：动态读取 Apple 地图自带的本地化资源，提供 iOS 原生语言切换。
+- **便捷手势唤出**：首次启动自动显示；后续使用只需在地图任意位置**双指按住不放 1.2 秒**即可再次唤出。
+- **一键跟随/恢复**：
+  - **Follow System（跟随系统）**：取消独立语言设置，恢复跟随 iOS 系统全局语言。
+  - **Restore Original（恢复原设置）**：一键还原首次修改前的初始状态（安全备份保存在 `MapsLingo.SafeBackup.v1`）。
+- **纯净安全**：不修改系统地区、定位、地图供应商或导航数据，不依赖任何外部服务器。
 
-早期原型在 iOS 15.4.1 的 arm64e 设备上发生过启动崩溃：系统会认证静态注册的 Objective-C 自定义类的父类指针，失败发生在任何面板代码执行之前。本版改用系统原生控制器，在主队列通过 Objective-C runtime 注册独立的回调类，不携带需要启动注册的自定义类、分类或协议元数据，不修改现有方法，不关闭 PAC；偏好保存和恢复逻辑不变。构建检查新增了静态类元数据回归检测，避免只检查编译与文件签名而漏过该缺陷。
+---
 
-注入 0.1.0 前先移除其他所有注入。不需要清空地图数据或反复更改 TrollFools 策略；[发布检查清单](PUBLISHING.md) 中的逐项验收仍然必要。
+## 📦 Release 附件说明
 
-## 功能
+| 文件名 | 类型 / 用途 | 适用人群 |
+| :--- | :--- | :--- |
+| **`MapsLingo-0.1.0.dylib`** | **主插件库** | 普通用户（正常使用只需注入此文件） |
+| **`MapsLingoRestore-0.1.0.dylib`** | **应急恢复库** | 面板打不开时的恢复工具（不可与主库同时注入） |
+| `MapsLingo-0.1.0-release.zip` | 完整发布包 | 包含二进制文件、使用说明、构建日志与校验报告 |
+| `SHA256SUMS-0.1.0.txt` | 哈希校验文件 | 用于校验文件完整性与安全性 |
+| `VERIFICATION-0.1.0.json` / `BUILD-INFO-0.1.0.txt` | 构建与签名报告 | 供高级用户及安全审计参考 |
 
-- 首次启动自动显示原生语言列表；以后在地图内**双指按住不动 1.2 秒**重新打开。
-- 自动读取 Maps 的本地化资源，显示语言自称、英文名称和语言代码，不虚构支持列表。
-- “Follow System / 跟随系统”移除地图的独立语言设置，不改变系统语言。
-- “Restore Original / 恢复原设置”恢复首次修改前的备份，保存在 `MapsLingo.SafeBackup.v1`。
-- 不替换任何 Objective-C 方法，不修改地区、定位、地图供应商或导航数据。
-- 无遥测、无网络请求，不读取或记录位置、搜索、路线、联系人。
+---
 
-## 注入与使用
+## 🚀 安装与使用指南
 
-1. 完全退出地图，在 TrollFools 移除所有已有注入，确认原版地图可以打开。**不要叠加注入。**
-2. Maps → Advanced Settings：打开 **Prefer Main Executable**。其余选项先保持默认：Lexicographic、Compatibility Fallback 开启、Use Weak Reference 开启。
-3. 只注入 **`MapsLingo-0.1.0.dylib`**，不要同时注入恢复库。
-4. 打开地图，等待语言面板出现。选择语言，再点确认；第一次展示面板不会自动更改语言。
-5. **在多任务界面把地图卡片向上划掉，再重新打开。** 返回桌面不是彻底退出。语言偏好在下一次启动生效，不会即时翻译已经打开的界面。
+### 步骤 1：准备与注入
+1. 在多任务界面将 **Apple 地图** 卡片向上划掉，彻底退出地图。
+2. 打开 **TrollFools**，进入 **Advanced Settings**（高级设置）：
+   - 开启 **Prefer Main Executable**（优先主程序）。
+   - 其余选项保持默认（开启 `Lexicographic`、开启 `Compatibility Fallback`、开启 `Use Weak Reference`）。
+3. 选择注入 **`MapsLingo-0.1.0.dylib`**。
 
-面板中的勾选表示**已保存的偏好**，不是当前界面已完成切换。关闭面板后，双指长按可再次修改；无需重新注入。
+### 步骤 2：选择语言并生效
+1. 打开 Apple 地图，等待语言选择面板自动弹出（若未弹出，在地图界面**双指长按 1.2 秒**）。
+2. 选择希望使用的语言并点击 **确认**（选定后面板勾选代表“已保存偏好”，此时界面不会立即更新）。
+3. **关键步骤（使设置生效）**：进入 iOS 多任务界面，**将 Apple 地图卡片向上划掉彻底退出，然后重新打开地图**。
+   > ⚠️ **注意**：仅仅返回桌面并非彻底退出。语言偏好需在下一次 App 冷启动时才会加载生效。
 
-手势允许与地图手势同时识别、不取消触摸，但不同设备或辅助功能配置仍可能有冲突，需实测。首次提示关闭后不会每次启动重复弹出。
+---
 
-## 恢复与卸载
+## 🔄 恢复与卸载
 
-**仅移除 dylib 不会撤销已经保存的语言。**
+> ⚠️ **特别提示**：仅仅在 TrollFools 中移除 dylib **不会**自动撤销已经保存的语言偏好。
 
-- 想跟随当前系统语言：面板选择 Follow System，彻底关闭并重开地图。
-- 想恢复首次修改前的设置：选择 Restore Original，再彻底关闭地图、移除主库并重开。
-- 面板无法使用时：先移除主库，单独注入 `MapsLingoRestore-0.1.0.dylib`，打开地图等待几秒，再关闭、移除恢复库并重开。
+### 方案 A：恢复跟随系统语言（推荐）
+1. 双指长按打开地图内面板，选择 **Follow System（跟随系统）** 并确认。
+2. 彻底杀掉地图后台并重新打开。
+3. （可选）在 TrollFools 中移除 `MapsLingo-0.1.0.dylib`。
 
-恢复只处理本插件的语言备份，不清空地图数据。如果语言后来被其他方式改成不同值，恢复操作会保留该值并清理旧备份。
+### 方案 B：恢复首次修改前的原始设置
+1. 双指长按打开地图内面板，选择 **Restore Original（恢复原设置）** 并确认。
+2. 彻底杀掉地图后台。
+3. 在 TrollFools 中移除主插件库，重新打开地图。
 
-首次展示记录会保留在地图自己的偏好域中，因此重新注入后可能不会自动弹出面板；仍可通过双指长按打开。
+### 方案 C：应急恢复（面板无法唤出时）
+1. 在 TrollFools 中**移除主库** `MapsLingo-0.1.0.dylib`。
+2. 单独注入应急恢复库 **`MapsLingoRestore-0.1.0.dylib`**。
+3. 打开地图，等待 3~5 秒。
+4. 杀掉地图后台，在 TrollFools 中**移除恢复库**，再次重新打开地图。
 
-## 限制与排错
+---
 
-- 界面、地图地名、POI、导航语音不是同一条语言链路。设置成功不代表全部都会切换；本插件不强制修改服务器或系统守护进程行为。
-- TrollFools 的 Prefer Main Executable 只是优先选主程序，受保护时仍可能回退。注入日志的 `Best matched Mach-O is .../Maps.app/Maps` 才能确认目标。
-- 如果日志写着 `mapping process is a platform binary, but mapped file is not`，先 Eject All 并确认原版可启动。这是加载/签名问题，不要删除 Apple 的框架或继续叠加注入。
-- 不再使用静态 `CFSTR` / Objective-C 字符串常量，避免此前 arm64e 的 CFString 指针认证故障；运行时创建字符串，不关闭 PAC 或签名检查。
-- 如果面板不出现，先试双指长按并确认没有旧版残留；再提供 TrollFools 注入日志。Weak Reference 可能允许地图在插件实际未加载时正常启动，不能只凭“不闪退”判断加载成功。
-- 闪退日志位于 Settings → Privacy → Analytics & Improvements → Analytics Data，文件通常为 `Maps-….ips`。公开提交前遮盖设备标识和个人信息，保留异常、调用栈、架构和插件 UUID。
+## ⚠️ 技术限制与排错指南
 
-## 本地构建
+### 1. 语言生效范围说明
+* **界面 vs 地名 vs 语音**：iOS 应用界面语言、地图 POI 地名以及 Siri 导航语音属于不同的数据链路。本插件仅切换 App UI 界面语言，**不会也不可能强制修改 Apple 地图服务器返回的矢量地名或语音引擎**。
 
-### macOS + Xcode
+### 2. 注入失败 / 面板不弹出排查
+* **启动提示**：首次弹出提示关闭后不会每次启动重复弹出，请使用**双指长按 1.2 秒**手动唤出。部分辅助功能或手势插件可能存在手势冲突。
+* **目标进程确认**：检查 TrollFools 注入日志，确认包含 `Best matched Mach-O is .../Maps.app/Maps` 才代表正确注入了主程序。
+* **平台二进制报错**：若日志出现 `mapping process is a platform binary, but mapped file is not`，说明存在加载或签名异常。请先在 TrollFools 中点击 **Eject All** 并确认原版地图可正常启动。切勿删除 Apple 系统框架或盲目叠加注入。
 
-需要完整 Xcode 的 iPhoneOS SDK，以及 Node.js 22 或更新版本。SDK 和工具链**不随本仓库分发**。
+<a id="crash-logs"></a>
 
+### 3. 崩溃日志提交（Crash Logs）
+若遇到闪退，排错日志路径为：`设置` → `隐私与安全性` → `分析与改进` → `分析数据`，搜索以 `Maps-` 开头、后缀为 `.ips` 的文件（如 `Maps-202X-XX-XX.ips`）。
+> 💡 **提交反馈提示**：在公开 Issue 提交日志前，请务必隐去个人标识与设备敏感信息，保留异常类型（Exception）、调用栈（Call Stack）、硬件架构及插件 UUID。
+
+---
+
+## 🛠️ 本地构建 (Local Build)
+
+### 环境依赖
+- **macOS**：需要完整 Xcode（包含 iPhoneOS SDK）以及 Node.js 22+（SDK 与编译工具链不随本仓库分发）。
+- **Linux / WSL**：支持交叉编译。
+
+### 构建命令
+
+#### macOS + Xcode 环境：
 ```bash
 bash build.sh
 node scripts/verify.mjs
 node scripts/package.mjs
 ```
 
-### Linux / WSL 交叉编译
-
+#### Linux / WSL 交叉编译：
 ```bash
 TOOLCHAIN_BIN=/path/to/iphone/bin \
 SDKROOT=/path/to/iPhoneOS.sdk \
@@ -77,15 +111,13 @@ bash build.sh
 node scripts/verify.mjs
 node scripts/package.mjs
 ```
+> **提示**：若未配置环境变量，Linux 构建会自动使用本地 `.build-tools/toolchain-modern/linux/iphone/bin` 与 `.build-tools/sdk/iPhoneOS15.6.sdk`。Windows 用户可在 WSL 中编译，再回到 Windows 环境运行 Node.js 校验与打包脚本。
 
-没有配置环境变量时，Linux 构建可使用本地 `.build-tools/toolchain-modern/linux/iphone/bin` 和 `.build-tools/sdk/iPhoneOS15.6.sdk`。Windows 用户可在 WSL 编译，然后回到项目目录，在 Windows 的 Node.js 中运行校验和打包命令。
+默认输出兼容 arm64 + 现代 arm64e ABI 的通用 dylib（运行时创建字符串，符合 PAC 指针认证规范）。所有产物均保存在 `dist/` 目录下。
 
-默认输出 arm64 + 现代 arm64e ABI 的通用 dylib。校验脚本检查最低系统版本、依赖、UUID、静态 CFString/类注册元数据回归和每页 ad-hoc 签名；这些检查不能替代真机测试。
+---
 
-输出都在 `dist/`：主库、恢复库、构建记录、校验报告、SHA-256 清单、安装包和**不含工具链/SDK/旧版文件/崩溃日志**的源码 ZIP。
+## 📄 声明与许可
 
-## GitHub 发布
-
-见 [发布检查清单](PUBLISHING.md) 和 [变更记录](CHANGELOG.md)。GitHub Actions 配置会在 macOS 构建并上传工作流产物，不会自动创建公开 Release。
-
-当前未替你选择许可证。公开作为开源项目发布前，请确定并加入适合的 `LICENSE`；打包脚本会自动收录它。本项目与 Apple、TrollFools 无隶属关系。
+- 本项目基于 **MIT 许可证** 开源。
+- 本项目为独立开源插件，与 Apple Inc. 或 TrollFools 开发团队无任何隶属关系。

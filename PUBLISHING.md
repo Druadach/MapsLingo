@@ -10,7 +10,7 @@ GitHub 描述建议：`Apple Maps language picker for iOS 15+ — TrollFools-inj
 
 源码包包含当前 `src/`、构建/校验/打包脚本、中英文说明、变更记录和 GitHub Actions 配置。`dist/` 与本地历史文件被 Git 忽略；二进制应放在 GitHub Releases，而不是提交到 Git 历史。
 
-1. 先决定许可证并加入 `LICENSE`。如选择 MIT，确认版权声明中的作者/年份，不使用示例占位作者。当前没有自动为你授予或选择许可证。
+1. 许可证已定为 MIT（`LICENSE`，版权所有者 Druadach，2026）。如要更换，替换 `LICENSE` 并同步 README 中的许可说明；打包脚本会自动把 `LICENSE` 收进源码包与发布包。
 2. 必要时在 README 补充你的仓库链接、作者和联系方式；不要误称这是 Apple 官方工具。
 3. 从仓库根目录运行 `bash build.sh`、`node scripts/verify.mjs`、`node scripts/package.mjs`。Windows 可在 WSL 构建、Windows Node.js 校验打包。
 4. 在干净源码目录初始化 Git（已有仓库则跳过）、提交，并在确认远端地址与待推送内容后推送到你创建的 GitHub 仓库。构建和打包脚本不会自动建仓、提交、推送或发布。
