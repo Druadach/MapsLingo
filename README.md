@@ -7,7 +7,7 @@ A standalone language picker for Apple Maps on iOS 15+. Switch the Maps interfac
 
 Implemented as a dylib injected through TrollFools. It replaces no Objective-C methods, sends no telemetry, makes no network requests, and never reads or records location, routes, or personal data.
 
-<img width="500" alt="20260911-210409" src="https://github.com/user-attachments/assets/2e6a2b40-88b1-4bad-874f-d59bae68ac3e" />
+<img width="300" alt="20260911-210409" src="https://github.com/user-attachments/assets/2e6a2b40-88b1-4bad-874f-d59bae68ac3e" />
 
 ---
 
