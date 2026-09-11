@@ -1,0 +1,31 @@
+name: Bug report / 问题反馈
+description: Report a language, picker, or injection problem.
+body:
+  - type: markdown
+    attributes:
+      value: Please remove device identifiers, location data, and other private information before attaching logs or screenshots.
+  - type: input
+    id: environment
+    attributes:
+      label: Device and iOS / 机型与系统
+      placeholder: iPhone model, iOS version
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: MapsLingo and TrollFools versions
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Steps, expected result, actual result / 操作与现象
+      description: Include the selected language, whether Maps was fully closed, and whether the UI, map labels, or voice stayed unchanged.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Injection target and sanitized logs / 注入目标与脱敏日志
+      description: Include the Best matched Mach-O line, whether Maps launches without injections, and a fresh crash report if applicable.

@@ -1,0 +1,10 @@
+.build-tools/
+/build/
+/dist/
+/diagnostics/
+.DS_Store
+*.ips
+*.crash
+*.dmp
+*.xcuserstate
+xcuserdata/
