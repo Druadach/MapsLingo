@@ -2,10 +2,12 @@
 
 [简体中文](README.zh.md)
 
-> A standalone language picker for Apple Maps on iOS 15+. Switch the Maps interface language freely, decoupled from the system-wide language setting.
-> 💡 Compatibility: verified on a real device running iOS 15.4.1. If your setup runs into problems, see [3. Submitting Crash Logs](#crash-logs).
+A standalone language picker for Apple Maps on iOS 15+. Switch the Maps interface language freely, decoupled from the system-wide language setting.
+💡 Compatibility: verified on a real device running iOS 15.4.1. If your setup runs into problems, see [3. Submitting Crash Logs](#crash-logs).
 
-Implemented as a dylib injected through **TrollFools**. It replaces no Objective-C methods, sends no telemetry, makes no network requests, and never reads or records location, routes, or personal data.
+Implemented as a dylib injected through TrollFools. It replaces no Objective-C methods, sends no telemetry, makes no network requests, and never reads or records location, routes, or personal data.
+
+<img width="500" alt="20260911-210409" src="https://github.com/user-attachments/assets/2e6a2b40-88b1-4bad-874f-d59bae68ac3e" />
 
 ---
 
