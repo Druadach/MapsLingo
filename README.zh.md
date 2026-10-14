@@ -116,6 +116,17 @@ node scripts/package.mjs
 ```
 > **提示**：若未配置环境变量，Linux 构建会自动使用本地 `.build-tools/toolchain-modern/linux/iphone/bin` 与 `.build-tools/sdk/iPhoneOS15.6.sdk`。Windows 用户可在 WSL 中编译，再回到 Windows 环境运行 Node.js 校验与打包脚本。
 
+> **工具链与 SDK 来源**（两者均不随本仓库分发）：
+> - 交叉工具链 —— `L1ghtmann/llvm-project` 预发布版 [`main-update_3-eabca92`](https://github.com/L1ghtmann/llvm-project/releases/tag/main-update_3-eabca92)，资产 `iOSToolchain-x86_64.tar.xz`，SHA-256 `cc9fbc7f8a3f9336f926cd4fb7cc2233a17b2ba40504cc8c0ff3211bd9df27e3`（LLVM/Clang 19.0.0 git `eabca92703dccee96288019c774756d2a33522ee`，ld64 956.6）。
+> - SDK —— Theos [`theos/sdks` `master-146e41f`](https://github.com/theos/sdks/releases/tag/master-146e41f)，资产 `iPhoneOS15.6.sdk.tar.xz`，SHA-256 `c4a02f5cac1101d1e5e506a1d117de38fd23714a6f535d50c64265bc7351f623`。
+>
+> 还原 `build.sh` 期望的本地回退目录结构：
+> ```bash
+> mkdir -p .build-tools/toolchain-modern .build-tools/sdk
+> tar -xJf iOSToolchain-x86_64.tar.xz -C .build-tools/toolchain-modern   # -> linux/iphone/bin
+> tar -xJf iPhoneOS15.6.sdk.tar.xz   -C .build-tools/sdk                  # -> iPhoneOS15.6.sdk
+> ```
+
 默认输出兼容 arm64 + 现代 arm64e ABI 的通用 dylib（运行时创建字符串，符合 PAC 指针认证规范）。所有产物均保存在 `dist/` 目录下。
 
 ---

@@ -116,6 +116,17 @@ node scripts/package.mjs
 ```
 > **Tip**: if the environment variables are not set, the Linux build falls back to the local `.build-tools/toolchain-modern/linux/iphone/bin` and `.build-tools/sdk/iPhoneOS15.6.sdk`. Windows users can compile in WSL, then run the Node.js verification and packaging steps from Windows.
 
+> **Toolchain & SDK sources** (neither is committed to this repository):
+> - Cross-toolchain — `L1ghtmann/llvm-project` prerelease [`main-update_3-eabca92`](https://github.com/L1ghtmann/llvm-project/releases/tag/main-update_3-eabca92), asset `iOSToolchain-x86_64.tar.xz`, SHA-256 `cc9fbc7f8a3f9336f926cd4fb7cc2233a17b2ba40504cc8c0ff3211bd9df27e3` (LLVM/Clang 19.0.0 git `eabca92703dccee96288019c774756d2a33522ee`, ld64 956.6).
+> - SDK — Theos [`theos/sdks` `master-146e41f`](https://github.com/theos/sdks/releases/tag/master-146e41f), asset `iPhoneOS15.6.sdk.tar.xz`, SHA-256 `c4a02f5cac1101d1e5e506a1d117de38fd23714a6f535d50c64265bc7351f623`.
+>
+> Restore the local fallback layout that `build.sh` expects:
+> ```bash
+> mkdir -p .build-tools/toolchain-modern .build-tools/sdk
+> tar -xJf iOSToolchain-x86_64.tar.xz -C .build-tools/toolchain-modern   # -> linux/iphone/bin
+> tar -xJf iPhoneOS15.6.sdk.tar.xz   -C .build-tools/sdk                  # -> iPhoneOS15.6.sdk
+> ```
+
 The default output is a universal dylib for arm64 + the modern arm64e ABI (strings are created at runtime and comply with PAC pointer authentication). All artifacts are written to `dist/`.
 
 ---
